@@ -52,9 +52,7 @@ func (fs *FeedStatisticsHandler) SetJobsRemovedByFilters(jobsRemovedByFilters in
 		fmt.Println(err)
 	}
 
-	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.InsertedID, bson.M{
-		"jobsRemovedByFilters": jobsRemovedByFilters,
-	})
+	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{"$set": bson.M{"jobsRemovedByFilters": jobsRemovedByFilters}})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -69,9 +67,7 @@ func (fs *FeedStatisticsHandler) SetJobsInFeed(jobsInFeed int) {
 		fmt.Println(err)
 	}
 
-	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.InsertedID, bson.M{
-		"jobsInFeed": jobsInFeed,
-	})
+	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{"$set": bson.M{"jobsInFeed": jobsInFeed}})
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -87,11 +83,15 @@ func (fs *FeedStatisticsHandler) EndAndSendFeedStatistics() {
 		fmt.Println(err)
 	}
 
-	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.InsertedID, bson.M{
+	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{
 		"duration": duration,
 		"success":  true,
 	})
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func (fs *FeedStatisticsHandler) idFilter() interface{} {
+	return bson.M{"_id": bson.M{"$eq": fs.InsertedID}}
 }
