@@ -83,10 +83,10 @@ func (fs *FeedStatisticsHandler) EndAndSendFeedStatistics() {
 		fmt.Println(err)
 	}
 
-	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{
+	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{"$set": bson.M{
 		"duration": duration,
 		"success":  true,
-	})
+	}})
 	if err != nil {
 		fmt.Println(err)
 	}
