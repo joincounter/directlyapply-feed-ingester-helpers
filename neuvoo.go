@@ -8,15 +8,13 @@ import (
 	"time"
 )
 
-// NeuvooJobs neuvoo xml root
-type NeuvooJobs struct {
+type neuvooJobs struct {
 	XMLName xml.Name    `xml:"jobs"`
 	Text    string      `xml:",chardata"`
-	Job     []NeuvooJob `xml:"job"`
+	Job     []neuvooJob `xml:"job"`
 }
 
-// NeuvooJob neuvoo standard job
-type NeuvooJob struct {
+type neuvooJob struct {
 	Text        string  `xml:",chardata"`
 	Jobid       string  `xml:"jobid"`
 	Title       string  `xml:"title"`
@@ -55,7 +53,7 @@ func NeuvooConverter(file *os.File) (*[]StandardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job NeuvooJob
+				var job neuvooJob
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {

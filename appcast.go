@@ -8,20 +8,17 @@ import (
 	"time"
 )
 
-// AppcastRoot root of any app cast file
-type AppcastRoot struct {
+type appcastRoot struct {
 	XMLName xml.Name    `xml:"source"`
-	Jobs    AppcastJobs `xml:"jobs"`
+	Jobs    appcastJobs `xml:"jobs"`
 }
 
-// AppcastJobs also a root node
-type AppcastJobs struct {
+type appcastJobs struct {
 	XMLName xml.Name     `xml:"jobs"`
-	Jobs    []RawAppCast `xml:"job"`
+	Jobs    []rawAppCast `xml:"job"`
 }
 
-// RawAppCast standard Appcast job
-type RawAppCast struct {
+type rawAppCast struct {
 	XMLName     xml.Name `xml:"job"`
 	Title       string   `xml:"title"`
 	Company     string   `xml:"company"`
@@ -60,7 +57,7 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job RawAppCast
+				var job rawAppCast
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
