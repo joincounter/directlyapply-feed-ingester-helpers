@@ -45,32 +45,22 @@ func NewFeedStatistics(url, feed, country, serverAddr string) FeedStatisticsHand
 
 // SetJobsRemovedByFilters this will set jobs removed by filter
 func (fs *FeedStatisticsHandler) SetJobsRemovedByFilters(jobsRemovedByFilters int) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(fs.ServerAddr))
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{"$set": bson.M{"jobsRemovedByFilters": jobsRemovedByFilters}})
-	if err != nil {
-		fmt.Println(err)
-	}
+	fs.assignData(bson.M{"jobsRemovedByFilters": jobsRemovedByFilters})
 }
 
 // SetJobsInFeed this will set jobs in feed
 func (fs *FeedStatisticsHandler) SetJobsInFeed(jobsInFeed int) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(fs.ServerAddr))
-	if err != nil {
-		fmt.Println(err)
-	}
+	fs.assignData(bson.M{"jobsInFeed": jobsInFeed})
+}
 
-	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{"$set": bson.M{"jobsInFeed": jobsInFeed}})
-	if err != nil {
-		fmt.Println(err)
-	}
+// SetDuplicatedJobs will write the number of duplicated jobs to the FeedStatisticsHandler
+func (fs *FeedStatisticsHandler) SetDuplicatedJobs(duplicates int) {
+	fs.assignData(bson.M{"duplicates": duplicates})
+}
+
+// SetSentToScraper will write the number of jobs to the scraper microservice
+func (fs *FeedStatisticsHandler) SetSentToScraper(sentToScraper int) {
+	fs.assignData(bson.M{"sentToScraper": sentToScraper})
 }
 
 // EndAndSendFeedStatistics this will end and finalize the feed statistics
@@ -87,6 +77,20 @@ func (fs *FeedStatisticsHandler) EndAndSendFeedStatistics() {
 		"duration": duration,
 		"success":  true,
 	}})
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func (fs *FeedStatisticsHandler) assignData(data interface{}) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(fs.ServerAddr))
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	_, err = client.Database("directlyapplyjobs").Collection("feedStatistics").UpdateOne(ctx, fs.idFilter(), bson.M{"$set": data})
 	if err != nil {
 		fmt.Println(err)
 	}
