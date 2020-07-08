@@ -8,13 +8,15 @@ import (
 	"time"
 )
 
-type neuvooJobs struct {
+// NeuvooJobs neuvoo xml root
+type NeuvooJobs struct {
 	XMLName xml.Name    `xml:"jobs"`
 	Text    string      `xml:",chardata"`
-	Job     []neuvooJob `xml:"job"`
+	Job     []NeuvooJob `xml:"job"`
 }
 
-type neuvooJob struct {
+// NeuvooJob neuvoo standard job
+type NeuvooJob struct {
 	Text        string  `xml:",chardata"`
 	Jobid       string  `xml:"jobid"`
 	Title       string  `xml:"title"`
@@ -32,9 +34,10 @@ type neuvooJob struct {
 	Company     string  `xml:"company"`
 }
 
-func neuvooConverter(file *os.File) (*[]standardJob, error) {
+// NeuvooConverter convert Neuvoo jobs to standard jobs
+func NeuvooConverter(file *os.File) (*[]StandardJob, error) {
 
-	jobs := make([]standardJob, 0)
+	jobs := make([]StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -52,7 +55,7 @@ func neuvooConverter(file *os.File) (*[]standardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job neuvooJob
+				var job NeuvooJob
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
@@ -65,7 +68,7 @@ func neuvooConverter(file *os.File) (*[]standardJob, error) {
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
-					jobs = append(jobs, standardJob{
+					jobs = append(jobs, StandardJob{
 						Title:       job.Title,
 						JobID:       job.Jobid,
 						URL:         job.URL,

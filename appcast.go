@@ -8,16 +8,19 @@ import (
 	"time"
 )
 
+// AppcastRoot root of any app cast file
 type AppcastRoot struct {
-	XMLName xml.Name `xml:"source"`
-	Jobs    Jobs     `xml:"jobs"`
+	XMLName xml.Name    `xml:"source"`
+	Jobs    AppcastJobs `xml:"jobs"`
 }
 
-type Jobs struct {
+// AppcastJobs also a root node
+type AppcastJobs struct {
 	XMLName xml.Name     `xml:"jobs"`
 	Jobs    []RawAppCast `xml:"job"`
 }
 
+// RawAppCast standard Appcast job
 type RawAppCast struct {
 	XMLName     xml.Name `xml:"job"`
 	Title       string   `xml:"title"`
@@ -36,9 +39,10 @@ type RawAppCast struct {
 	CPA         float32  `xml:"cpa"`
 }
 
-func appcastConverter(file *os.File) (*[]standardJob, error) {
+// AppcastConverter convert Appcast jobs to standard
+func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 
-	jobs := make([]standardJob, 0)
+	jobs := make([]StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -69,7 +73,7 @@ func appcastConverter(file *os.File) (*[]standardJob, error) {
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
-					jobs = append(jobs, standardJob{
+					jobs = append(jobs, StandardJob{
 						Title:       job.Title,
 						JobID:       job.SourceID,
 						URL:         job.URL,

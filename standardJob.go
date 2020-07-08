@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type standardJob struct {
+// StandardJob generic job to be used accross the system
+type StandardJob struct {
 	JobID       string    `json:"jobid"`
 	Title       string    `json:"title"`
 	URL         string    `json:"url"`
@@ -17,7 +18,8 @@ type standardJob struct {
 	Date        time.Time `json:"date"`
 }
 
-func (sj *standardJob) EstimatedValue() float64 {
+// EstimatedValue standard calc for the jobs value
+func (sj *StandardJob) EstimatedValue() float64 {
 	CPAEstimatedValue := sj.CPA * 0.7
 	CPCEstimatedValue := sj.CPC * 35
 	return math.Max(float64(CPAEstimatedValue), float64(CPCEstimatedValue))
