@@ -66,7 +66,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 				date, timeError := time.Parse(time.RFC3339, job.Date)
 
 				cpa, _ := strconv.ParseFloat(strings.Split(job.CPA, " ")[1], 32)
-				cpc, _ := strconv.ParseFloat(strings.Split(job.CPC, " ")[1], 32)
+				// cpc, _ := strconv.ParseFloat(strings.Split(job.CPC, " ")[1], 32)
 
 				if timeError != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, timeError.Error())
@@ -78,7 +78,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 						Company:     job.Company,
 						City:        job.City,
 						CPA:         float32(cpa),
-						CPC:         float32(cpc),
+						CPC:         0,
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
