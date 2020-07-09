@@ -80,6 +80,7 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 						CPC:         job.CPC,
 						Description: job.Description,
 						Date:        date,
+						Country:     job.Country,
 					})
 				}
 			}

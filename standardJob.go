@@ -16,6 +16,7 @@ type StandardJob struct {
 	CPC         float32   `json:"cpc,omitempty"`
 	Description string    `json:"description"`
 	Date        time.Time `json:"date"`
+	Country     string    `json:"country"`
 }
 
 // EstimatedValue standard calc for the jobs value
