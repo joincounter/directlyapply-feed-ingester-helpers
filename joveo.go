@@ -63,7 +63,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 				}
 
 
-				date, timeError := time.Parse(time.RFC3339, job.Date)
+				date, timeError := time.Parse("2006-01-02 15:04:05.000 MST", job.Date)
 
 				cpa, _ := strconv.ParseFloat(strings.Split(job.CPA, " ")[1], 32)
 				// cpc, _ := strconv.ParseFloat(strings.Split(job.CPC, " ")[1], 32)
