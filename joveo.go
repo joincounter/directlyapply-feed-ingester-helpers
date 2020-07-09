@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -24,8 +26,8 @@ type joveoJob struct {
 	Jobtype     string  `xml:"type"`
 	URL         string  `xml:"url"`
 	ZIP         string  `xml:"postalcode"`
-	CPC         float32 `xml:"cpc"`
-	CPA         float32 `xml:"cpa"`
+	CPC         string `xml:"cpc"`
+	CPA         string `xml:"cpa"`
 	Company     string  `xml:"company"`
 	Category    string  `xml:"category"`
 	State       string  `xml:"state"`
@@ -60,10 +62,14 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				date, err := time.Parse(time.RFC3339, job.Date)
 
-				if err != nil {
-					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
+				date, timeError := time.Parse(time.RFC3339, job.Date)
+
+				cpa, _ := strconv.ParseFloat(strings.Split(job.CPA, " ")[1], 32)
+				cpc, _ := strconv.ParseFloat(strings.Split(job.CPC, " ")[1], 32)
+
+				if timeError != nil {
+					fmt.Printf("error parsing date: title: %s err: %s", job.Title, timeError.Error())
 				} else {
 					jobs = append(jobs, StandardJob{
 						Title:       job.Title,
@@ -71,8 +77,8 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 						URL:         job.URL,
 						Company:     job.Company,
 						City:        job.City,
-						CPA:         job.CPA,
-						CPC:         job.CPC,
+						CPA:         float32(cpa),
+						CPC:         float32(cpc),
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
