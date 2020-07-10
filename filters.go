@@ -17,13 +17,16 @@ func NoJobTitleFilter(job *StandardJob) *StandardJob {
 }
 
 // EvaluateFilter evaluate filter against a slice of jobs
-func EvaluateFilter(jobs []StandardJob, filter func(job *StandardJob) *StandardJob) []StandardJob {
+func EvaluateFilter(jobs []StandardJob, filter func(job *StandardJob) *StandardJob) ([]StandardJob, int) {
 	evaluatedJobs := make([]StandardJob, 0)
+	numberJobsRemoved := 0
 	for i := 0; i < len(jobs); i++ {
 		job := filter(&jobs[i])
 		if job != nil {
 			evaluatedJobs = append(evaluatedJobs, *job)
+		} else {
+			numberJobsRemoved++
 		}
 	}
-	return evaluatedJobs
+	return evaluatedJobs, numberJobsRemoved
 }
