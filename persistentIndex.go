@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -10,11 +9,9 @@ import (
 )
 
 // FetchPersistentJobs fetches limited job data from the indexPersistent collection
-func FetchPersistentJobs(filter interface{}, serverAddr string) (*[]PersistentIndexJob, error) {
+func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr string) (*[]PersistentIndexJob, error) {
 	appcastJobs := make([]PersistentIndexJob, 0)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
 		return nil, err
