@@ -63,6 +63,16 @@ func (fs *FeedStatisticsHandler) SetSentToScraper(sentToScraper int) {
 	fs.assignData(bson.M{"sentToScraper": sentToScraper})
 }
 
+// SetAlreadyOnSite will write the number of jobs already on the site
+func (fs *FeedStatisticsHandler) SetAlreadyOnSite(alreadyOnSite int) {
+	fs.assignData(bson.M{"alreadyOnSite": alreadyOnSite})
+}
+
+// SetRemovedFromElastic will write the number of jobs removed from elastic
+func (fs *FeedStatisticsHandler) SetRemovedFromElastic(removedFromElastic int) {
+	fs.assignData(bson.M{"removedFromElastic": removedFromElastic})
+}
+
 // EndAndSendFeedStatistics this will end and finalize the feed statistics
 func (fs *FeedStatisticsHandler) EndAndSendFeedStatistics() {
 	duration := time.Since(fs.StartTime)
