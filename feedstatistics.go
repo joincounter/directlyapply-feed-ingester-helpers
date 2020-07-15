@@ -18,7 +18,7 @@ type FeedStatisticsHandler struct {
 }
 
 // NewFeedStatistics this create a new feed statistics
-func NewFeedStatistics(url, feed, country, serverAddr string) FeedStatisticsHandler {
+func NewFeedStatistics(name, url, feed, country, serverAddr string) FeedStatisticsHandler {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
@@ -29,6 +29,7 @@ func NewFeedStatistics(url, feed, country, serverAddr string) FeedStatisticsHand
 	startTime := time.Now()
 
 	cur, err := client.Database("directlyapplyjobs").Collection("feedStatistics").InsertOne(ctx, bson.M{
+		"name":      name,
 		"url":       url,
 		"feed":      feed,
 		"country":   country,
