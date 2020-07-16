@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"time"
+
+	"github.com/dylankbuckley/zippia/helpers"
 )
 
 type neuvooJobs struct {
@@ -71,6 +73,7 @@ func NeuvooConverter(file *os.File) (*[]StandardJob, error) {
 						JobID:       job.Jobid,
 						URL:         job.URL,
 						Company:     job.Company,
+						Slug:		 helpers.GenerateSlug(job.Company),
 						City:        job.City,
 						CPA:         0,
 						CPC:         job.CPC,

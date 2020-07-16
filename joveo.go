@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/dylankbuckley/zippia/helpers"
 )
 
 type joveoJobs struct {
@@ -84,6 +86,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					JobID:       job.Jobid,
 					URL:         job.URL,
 					Company:     job.Company,
+					Slug:		 helpers.GenerateSlug(job.Company),
 					City:        job.City,
 					CPA:         tryParseCPA(job.CPA),
 					CPC:         tryParseCPA(job.CPC),

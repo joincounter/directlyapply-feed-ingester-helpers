@@ -11,6 +11,7 @@ type StandardJob struct {
 	Title       string    `json:"title"`
 	URL         string    `json:"url"`
 	Company     string    `json:"company"`
+	Slug     	string    `json:"slug"`
 	City        string    `json:"city"`
 	CPA         float32   `json:"cpa,omitempty"`
 	CPC         float32   `json:"cpc,omitempty"`
