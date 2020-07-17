@@ -6,8 +6,6 @@ import (
 	"io"
 	"os"
 	"time"
-
-	"github.com/dylankbuckley/zippia/helpers"
 )
 
 type appcastRoot struct {
@@ -77,7 +75,7 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 						JobID:       job.SourceID,
 						URL:         job.URL,
 						Company:     job.Company,
-						Slug:		 helpers.GenerateSlug(job.Company),
+						Slug:        GenerateSlug(job.Company),
 						City:        job.City,
 						CPA:         job.CPA,
 						CPC:         job.CPC,

@@ -8,8 +8,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/dylankbuckley/zippia/helpers"
 )
 
 type joveoJobs struct {
@@ -63,7 +61,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					fmt.Printf("continuing: error occured while decoding xml: %s", err)
 					continue
 				}
-				
+
 				date, timeError := time.Parse("2006-01-02 15:04:05.000 MST", job.Date)
 
 				if timeError != nil {
@@ -86,7 +84,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					JobID:       job.Jobid,
 					URL:         job.URL,
 					Company:     job.Company,
-					Slug:		 helpers.GenerateSlug(job.Company),
+					Slug:        GenerateSlug(job.Company),
 					City:        job.City,
 					CPA:         tryParseCPA(job.CPA),
 					CPC:         tryParseCPA(job.CPC),
