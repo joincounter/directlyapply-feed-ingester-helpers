@@ -74,6 +74,11 @@ func (fs *FeedStatisticsHandler) SetRemovedFromElastic(removedFromElastic int) {
 	fs.assignData(bson.M{"removedFromElastic": removedFromElastic})
 }
 
+// SetFeedLastModified will record the feeds update time (s3 only)
+func (fs *FeedStatisticsHandler) SetFeedLastModified(feedLastModified string) {
+	fs.assignData(bson.M{"feedLastModified": feedLastModified})
+}
+
 // EndAndSendFeedStatistics this will end and finalize the feed statistics
 func (fs *FeedStatisticsHandler) EndAndSendFeedStatistics() {
 	duration := time.Since(fs.StartTime)
