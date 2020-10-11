@@ -20,6 +20,7 @@ type StandardJob struct {
 	Country        string    `json:"country"`
 	ZIP            string    `json:"zip"`
 	State          string    `json:"state"`
+	Location          string    `json:"location"`
 	RemoteAvalible bool      `json:"remoteAvalible"`
 }
 

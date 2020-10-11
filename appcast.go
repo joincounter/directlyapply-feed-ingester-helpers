@@ -30,6 +30,7 @@ type rawAppCast struct {
 	SourceID    string   `xml:"job_reference"`
 	Country     string   `xml:"country"`
 	Zip         string   `xml:"zip"`
+	Location         string   `xml:"location"`
 	State       string   `xml:"state"`
 	Category    string   `xml:"category"`
 	CPC         float32  `xml:"cpc"`
@@ -77,6 +78,9 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 						Company:     job.Company,
 						Slug:        GenerateSlug(job.Company),
 						City:        job.City,
+						State:        job.State,
+						ZIP:		job.Zip,
+						Location: job.Location,
 						CPA:         job.CPA,
 						CPC:         job.CPC,
 						Description: job.Description,
