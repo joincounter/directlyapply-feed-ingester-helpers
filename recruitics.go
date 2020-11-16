@@ -65,7 +65,7 @@ func RecruiticsConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				date, timeError := time.Parse("Mon, 2 Jan 2006 14:04:05 MST", job.Date)
+				date, timeError := time.Parse("Mon, 2 Jan 2006 15:04:05 MST", job.Date)
 
 				if timeError != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, timeError.Error())
