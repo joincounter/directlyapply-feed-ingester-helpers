@@ -8,37 +8,8 @@ import (
 	"time"
 )
 
-type appcastRoot struct {
-	XMLName xml.Name    `xml:"source"`
-	Jobs    appcastJobs `xml:"jobs"`
-}
-
-type appcastJobs struct {
-	XMLName xml.Name     `xml:"jobs"`
-	Jobs    []rawAppCast `xml:"job"`
-}
-
-type rawAppCast struct {
-	XMLName     xml.Name `xml:"job"`
-	Title       string   `xml:"title"`
-	Company     string   `xml:"company"`
-	Description string   `xml:"body"`
-	URL         string   `xml:"url"`
-	City        string   `xml:"city"`
-	Posted      string   `xml:"posted_at"`
-	Type        string   `xml:"job_type"`
-	SourceID    string   `xml:"job_reference"`
-	Country     string   `xml:"country"`
-	Zip         string   `xml:"zip"`
-	Location    string   `xml:"location"`
-	State       string   `xml:"state"`
-	Category    string   `xml:"category"`
-	CPC         float32  `xml:"cpc"`
-	CPA         float32  `xml:"cpa"`
-}
-
 // AppcastConverter convert Appcast jobs to standard
-func AppcastConverter(file *os.File) (*[]StandardJob, error) {
+func DirectlyApplyConverter(file *os.File) (*[]StandardJob, error) {
 
 	jobs := make([]StandardJob, 0)
 
@@ -66,7 +37,7 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				date, err := time.Parse("2006-01-02", job.Posted)
+				date, err := time.Parse("Mon, 2 Jan 2006 15:04:05 MST", job.Posted)
 
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
