@@ -58,7 +58,7 @@ func ResumeLibraryConverter(file *os.File) (*[]StandardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job recruiticsJob
+				var job resumeLibJob
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
