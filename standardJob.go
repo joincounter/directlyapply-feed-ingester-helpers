@@ -7,21 +7,21 @@ import (
 
 // StandardJob generic job to be used accross the system
 type StandardJob struct {
-	JobID          string    `json:"jobid"`
-	Title          string    `json:"title"`
-	URL            string    `json:"url"`
-	Company        string    `json:"company"`
-	Slug           string    `json:"slug"`
-	City           string    `json:"city"`
-	CPA            float32   `json:"cpa,omitempty"`
-	CPC            float32   `json:"cpc,omitempty"`
-	Description    string    `json:"description"`
-	Date           time.Time `json:"date"`
-	Country        string    `json:"country"`
-	ZIP            string    `json:"zip"`
-	State          string    `json:"state"`
-	Location          string    `json:"location"`
-	RemoteAvalible bool      `json:"remoteAvalible"`
+	JobID          string    `json:"jobid" db:"external_id"`
+	Title          string    `json:"title" db:"title"`
+	URL            string    `json:"url" db:"url"`
+	Company        string    `json:"company" db:"company"`
+	Slug           string    `json:"slug" db:"company_slug"`
+	City           string    `json:"city" db:"city"`
+	CPA            float32   `json:"cpa,omitempty" db:"cpa"`
+	CPC            float32   `json:"cpc,omitempty" db:"cpc"`
+	Description    string    `json:"description" db:"description"`
+	Date           time.Time `json:"date" db:"date"`
+	Country        string    `json:"country" db:"country"`
+	ZIP            string    `json:"zip" db:"zip"`
+	State          string    `json:"state" db:"state"`
+	Location       string    `json:"location" db:"location"`
+	RemoteAvalible bool      `json:"remoteAvalible" db:"remote_avalible"`
 }
 
 // EstimatedValue standard calc for the jobs value
