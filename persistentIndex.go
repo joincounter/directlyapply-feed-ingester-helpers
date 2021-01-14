@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -33,6 +34,11 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 
 // PersistentIndexJob minimum representaion of a job
 type PersistentIndexJob struct {
-	ID  string `bson:"_id"`
-	URL string `bson:"url"`
+	ID         string    `bson:"_id" db:"external_id"`
+	URL        string    `bson:"url" db:"url"`
+	Title      string    `db:"title"`
+	CompanyID  uuid.UUID `db:"company_id"`
+	LocationID uuid.UUID `db:"location_id"`
+	CPA        float32   `db:"cpa"`
+	CPC        float32   `db:"cpc"`
 }
