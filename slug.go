@@ -5,6 +5,19 @@ import (
 	"strings"
 )
 
+// JobTitleSlug mcleans up and normalizes Job Title
+func JobTitleSlug(jobTitle string) string {
+	jobTitle = strings.Split(jobTitle, "--")[0]
+	jobTitle = strings.Replace(jobTitle, "|", "", -1)
+	jobTitle = strings.Replace(jobTitle, "?", "", -1)
+	jobTitle = strings.Replace(jobTitle, " ", "-", -1)
+	jobTitle = strings.Trim(jobTitle, "-")
+	if len(jobTitle) > 19 {
+		return jobTitle[:20]
+	}
+	return jobTitle
+}
+
 // LocationSlug makes a unique slug from a region and a city
 func LocationSlug(region string, city string) string {
 	city = strings.ToLower(city)
