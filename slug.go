@@ -10,8 +10,8 @@ func JobTitleSlug(jobTitle string) string {
 	jobTitle = strings.Split(jobTitle, "--")[0]
 	jobTitle = strings.Replace(jobTitle, " ", "-", -1)
 	jobTitle = strings.Trim(jobTitle, "-")
-	if len(jobTitle) > 19 {
-		return jobTitle[:20]
+	if len(jobTitle) > 49 {
+		return jobTitle[:50]
 	}
 	return jobTitle
 }
@@ -25,7 +25,11 @@ func LocationSlug(region string, city string) string {
 	}
 	region = strings.ToLower(region)
 	region = strings.Replace(region, " ", "-", -1)
-	return fmt.Sprintf("%s//%s", region, city)
+	region = fmt.Sprintf("%s//%s", region, city)
+	if len(region) > 49 {
+		return region[:50]
+	}
+	return region
 }
 
 // GenerateSlug is a standard slug generating function
@@ -51,5 +55,8 @@ func GenerateSlug(companyName string) string {
 	slug = strings.Replace(slug, "®", "", -1)
 	slug = strings.TrimRight(slug, "-")
 	slug = strings.TrimLeft(slug, "-")
+	if len(slug) > 49 {
+		return slug[:50]
+	}
 	return slug
 }
