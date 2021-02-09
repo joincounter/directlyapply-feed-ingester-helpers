@@ -8,8 +8,7 @@ import (
 // JobTitleSlug mcleans up and normalizes Job Title
 func JobTitleSlug(jobTitle string) string {
 	jobTitle = strings.Split(jobTitle, "--")[0]
-	jobTitle = strings.Replace(jobTitle, "|", "", -1)
-	jobTitle = strings.Replace(jobTitle, "?", "", -1)
+	jobTitle = strings.Replace(jobTitle, `\`, `\\`, -1)
 	jobTitle = strings.Replace(jobTitle, " ", "-", -1)
 	jobTitle = strings.Trim(jobTitle, "-")
 	if len(jobTitle) > 19 {
