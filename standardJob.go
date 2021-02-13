@@ -22,6 +22,7 @@ type StandardJob struct {
 	State          string    `json:"state" db:"state"`
 	Location       string    `json:"location" db:"location"`
 	RemoteAvalible bool      `json:"remoteAvalible" db:"remote_avalible"`
+	Recruiter      bool      `json:"recruiter" db:"recruiter"`
 }
 
 // EstimatedValue standard calc for the jobs value
