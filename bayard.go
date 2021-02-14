@@ -2,7 +2,7 @@ package helpers
 
 // BayardFilter this will filter out bayard companies
 func BayardFilter(job *StandardJob) *StandardJob {
-	if stringInSlice(job.Company, bayard) {
+	if StringInSlice(job.Company, bayard) {
 		return nil
 	}
 	return job
