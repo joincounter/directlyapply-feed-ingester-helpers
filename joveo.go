@@ -79,6 +79,16 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					return float32(cpa)
 				}
 
+				var tryParseCPC = func(s string) float32 {
+					split := strings.Split(job.CPC, " ")
+					lastBit := split[len(split)-1]
+					cpc, err := strconv.ParseFloat(lastBit, 32)
+					if err != nil {
+						return 0
+					}
+					return float32(cpc)
+				}
+
 				jobs = append(jobs, StandardJob{
 					Title:       job.Title,
 					JobID:       job.Jobid,
@@ -87,7 +97,7 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					Slug:        GenerateSlug(job.Company),
 					City:        job.City,
 					CPA:         tryParseCPA(job.CPA),
-					CPC:         tryParseCPA(job.CPC),
+					CPC:         tryParseCPC(job.CPC),
 					Description: job.Description,
 					Date:        date,
 					Country:     job.Country,
