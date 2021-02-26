@@ -74,7 +74,8 @@ func ResumeLibraryConverter(file *os.File) (*[]StandardJob, error) {
 				}
 
 				job.City = strings.Split(job.Location, ",")[0]
-				job.CPA = 1.0
+				
+				job.CPA = 1.50
 
 				jobs = append(jobs, StandardJob{
 					Title:       job.Title,
