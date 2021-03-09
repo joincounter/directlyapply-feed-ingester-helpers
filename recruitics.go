@@ -72,10 +72,13 @@ func RecruiticsConverter(file *os.File) (*[]StandardJob, error) {
 					return nil, err
 				}
 
-				cpcString := strings.Split(job.Sponsored, " ")[1]
-				float, _ := strconv.ParseFloat(cpcString, 32)
-				job.CPC = float32(float)
-				job.CPA = float32(float)
+				if job.Sponsored != "" {
+					cpcString := strings.Split(job.Sponsored, " ")[1]
+					float, _ := strconv.ParseFloat(cpcString, 32)
+					job.CPC = float32(float)
+					job.CPA = float32(float)
+				}
+
 
 				job.Location = job.City + ", " + job.State + ", " + job.Country
 
