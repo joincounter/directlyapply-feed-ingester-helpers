@@ -72,9 +72,6 @@ func RecruiticsConverter(file *os.File) (*[]StandardJob, error) {
 					return nil, err
 				}
 
-				fmt.Println(job)
-				fmt.Println(" ")
-
 				if job.Sponsored != "" {
 					if len(strings.Split(job.Sponsored, " ")) > 1 {
 						cpcString := strings.Split(job.Sponsored, " ")[1]
