@@ -10,6 +10,7 @@ func JobTitleSlug(jobTitle string) string {
 	jobTitle = strings.Split(jobTitle, "--")[0]
 	jobTitle = strings.Replace(jobTitle, " ", "-", -1)
 	jobTitle = strings.Trim(jobTitle, "-")
+	jobTitle = strings.ToLower(jobTitle)
 	return jobTitle
 }
 
