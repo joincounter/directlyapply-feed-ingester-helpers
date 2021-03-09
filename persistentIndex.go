@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/bson"
@@ -30,6 +31,17 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 	}
 
 	return &appcastJobs, nil
+}
+
+// DeletePersistentJobs remove drinks from
+func DeletePersistentJobs(ctx context.Context, ids []string, serverAddr string) (*mongo.UpdateResult, error) {
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
+	if err != nil {
+		return nil, err
+	}
+	query := bson.M{"_id": bson.M{"$in": ids}}
+	update := bson.M{"$set": bson.M{"deletedFromIndex": true, "deletedTime": time.Now()}, "$unset": bson.M{"description": ""}}
+	return client.Database("directlyapplyjobs").Collection("indexPersistent").UpdateMany(ctx, query, update)
 }
 
 // PersistentIndexJob minimum representaion of a job
