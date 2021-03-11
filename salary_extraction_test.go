@@ -3,10 +3,26 @@ package helpers
 import "testing"
 
 func TestExtractUSDSalaries(t *testing.T) {
-	jobDescription := "Hello, great job, £40,000"
 	t.Run("basic test", func(t *testing.T) {
+		jobDescription := "Hello, great job, £40,000"
 		expected := 40000.0
 		output := ExtractUSDSalaries(jobDescription).Annual()
+		if output != expected {
+			t.Errorf("Expected %f but got %f", expected, output)
+		}
+	})
+	t.Run("wage test", func(t *testing.T) {
+		jobDescription := "Hello, great job, £5.56 per hour"
+		expected := 5.56
+		output := ExtractUSDSalaries(jobDescription).Hourly()
+		if output != expected {
+			t.Errorf("Expected %f but got %f", expected, output)
+		}
+	})
+	t.Run("wage test, range", func(t *testing.T) {
+		jobDescription := "Hello, great job, €12.50 - €13.50 per hour"
+		expected := 13.0
+		output := ExtractUSDSalaries(jobDescription).Hourly()
 		if output != expected {
 			t.Errorf("Expected %f but got %f", expected, output)
 		}

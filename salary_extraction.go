@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// ExtractUSDSalaries get salary data from job description
 func ExtractUSDSalaries(description string) SalaryData {
 	r, err := regexp.Compile("([£$€][0-9][0-9],[0-9][0-9][0-9]|[£$€][0-9][0-9][0-9][0-9][0-9]|[£$€][0-9][0-9][Kk])")
 	if err != nil {
@@ -34,6 +35,32 @@ func ExtractUSDSalaries(description string) SalaryData {
 		return annualSalaryData{annualRate: averageAnnualSalary, currency: string(curr)}
 	}
 
+	wageRedux, err := regexp.Compile(`([£$€][0-9]?[0-9]\.[0-9][0-9]|[£$€][0-9]?[0-9]\s)`)
+	if err != nil {
+		log.Fatalln("huge error, unrecoverable")
+	}
+
+	wageMatches := wageRedux.FindAllString(description, -1)
+
+	if len(wageMatches) > 0 {
+		curr := wageMatches[0][0]
+		if len(wageMatches) == 1 {
+			norm, err := normaliseSalaries(wageMatches[0])
+			if err != nil {
+				return emptySalaryData{}
+			}
+			return hourlySalaryData{HourlyRate: norm, currency: string(curr)}
+		}
+		if len(wageMatches) == 2 {
+			wageMin, err := normaliseSalaries(wageMatches[0])
+			wageMax, err := normaliseSalaries(wageMatches[1])
+			if err != nil {
+				return emptySalaryData{}
+			}
+			return hourlyRangeSalaryData{lowerHourlyRate: wageMin, higherHourlyRate: wageMax, currency: string(curr)}
+		}
+	}
+
 	return emptySalaryData{}
 }
 
@@ -57,11 +84,11 @@ func (esd emptySalaryData) Hourly() float64 {
 	return 0
 }
 
-func (esd emptySalaryData) asString() string {
+func (esd emptySalaryData) String() string {
 	return "no salary data"
 }
 
-func (esd emptySalaryData) getCurrency() string {
+func (esd emptySalaryData) GetCurrency() string {
 	return "None"
 }
 
@@ -78,11 +105,11 @@ func (asd annualSalaryData) Hourly() float64 {
 	return asd.annualRate / 1950
 }
 
-func (asd annualSalaryData) asString() string {
+func (asd annualSalaryData) String() string {
 	return fmt.Sprintf("%s%f per year", asd.currency, asd.Annual())
 }
 
-func (asd annualSalaryData) getCurrency() string {
+func (asd annualSalaryData) GetCurrency() string {
 	return asd.currency
 }
 
@@ -99,11 +126,37 @@ func (hsd hourlySalaryData) Hourly() float64 {
 	return hsd.HourlyRate
 }
 
-func (hsd hourlySalaryData) asString() string {
-	return fmt.Sprintf("%s%f per year", hsd.currency, hsd.Annual())
+func (hsd hourlySalaryData) String() string {
+	return fmt.Sprintf("%s%f per hour", hsd.currency, hsd.HourlyRate)
 }
 
-func (hsd hourlySalaryData) getCurrency() string {
+func (hsd hourlySalaryData) GetCurrency() string {
+	return hsd.currency
+}
+
+type hourlyRangeSalaryData struct {
+	lowerHourlyRate  float64
+	higherHourlyRate float64
+	currency         string
+}
+
+func (hsd hourlyRangeSalaryData) meanWage() float64 {
+	return (hsd.lowerHourlyRate + hsd.higherHourlyRate) / 2
+}
+
+func (hsd hourlyRangeSalaryData) Annual() float64 {
+	return hsd.meanWage() * 1950
+}
+
+func (hsd hourlyRangeSalaryData) Hourly() float64 {
+	return hsd.meanWage()
+}
+
+func (hsd hourlyRangeSalaryData) String() string {
+	return fmt.Sprintf("Between %s%f and %s%f per hour", hsd.currency, hsd.lowerHourlyRate, hsd.currency, hsd.higherHourlyRate)
+}
+
+func (hsd hourlyRangeSalaryData) GetCurrency() string {
 	return hsd.currency
 }
 
@@ -111,6 +164,6 @@ func (hsd hourlySalaryData) getCurrency() string {
 type SalaryData interface {
 	Annual() float64
 	Hourly() float64
-	asString() string
-	getCurrency() string
+	String() string
+	GetCurrency() string
 }
