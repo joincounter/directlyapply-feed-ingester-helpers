@@ -23,6 +23,9 @@ type StandardJob struct {
 	Location       string    `json:"location" db:"location"`
 	RemoteAvalible bool      `json:"remoteAvalible" db:"remote_avalible"`
 	Recruiter      bool      `json:"recruiter" db:"recruiter"`
+	SalaryMin      float64   `bson:"salaryMinimum" json:"salaryMinimum"`
+	SalaryMax      float64   `bson:"salaryMaximum" json:"salaryMaximum"`
+	SalaryType     string    `bson:"salaryType" json:"salaryType"`
 }
 
 // EstimatedValue standard calc for the jobs value
