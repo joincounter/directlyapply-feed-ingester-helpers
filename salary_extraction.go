@@ -80,6 +80,14 @@ func (esd emptySalaryData) SalaryType() string {
 	return "NONE"
 }
 
+func (esd emptySalaryData) SalaryMin() float64 {
+	return 0
+}
+
+func (esd emptySalaryData) SalaryMax() float64 {
+	return 0
+}
+
 func (esd emptySalaryData) Annual() float64 {
 	return 0
 }
@@ -103,6 +111,14 @@ type annualSalaryData struct {
 
 func (asd annualSalaryData) SalaryType() string {
 	return "ANNUAL"
+}
+
+func (asd annualSalaryData) SalaryMin() float64 {
+	return asd.annualRate
+}
+
+func (asd annualSalaryData) SalaryMax() float64 {
+	return asd.annualRate
 }
 
 func (asd annualSalaryData) Annual() float64 {
@@ -130,6 +146,14 @@ func (hsd hourlySalaryData) SalaryType() string {
 	return "HOURLY"
 }
 
+func (hsd hourlySalaryData) SalaryMin() float64 {
+	return hsd.HourlyRate
+}
+
+func (hsd hourlySalaryData) SalaryMax() float64 {
+	return hsd.HourlyRate
+}
+
 func (hsd hourlySalaryData) Annual() float64 {
 	return hsd.HourlyRate * 1950
 }
@@ -154,6 +178,14 @@ type hourlyRangeSalaryData struct {
 
 func (hsd hourlyRangeSalaryData) SalaryType() string {
 	return "HOURLY"
+}
+
+func (hsd hourlyRangeSalaryData) SalaryMin() float64 {
+	return hsd.lowerHourlyRate
+}
+
+func (hsd hourlyRangeSalaryData) SalaryMax() float64 {
+	return hsd.higherHourlyRate
 }
 
 func (hsd hourlyRangeSalaryData) meanWage() float64 {
@@ -183,4 +215,6 @@ type SalaryData interface {
 	String() string
 	GetCurrency() string
 	SalaryType() string
+	SalaryMin() float64
+	SalaryMax() float64
 }
