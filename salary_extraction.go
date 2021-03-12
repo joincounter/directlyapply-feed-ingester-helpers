@@ -76,6 +76,10 @@ func normaliseSalaries(extracted string) (float64, error) {
 
 type emptySalaryData struct{}
 
+func (esd emptySalaryData) SalaryType() string {
+	return "NONE"
+}
+
 func (esd emptySalaryData) Annual() float64 {
 	return 0
 }
@@ -95,6 +99,10 @@ func (esd emptySalaryData) GetCurrency() string {
 type annualSalaryData struct {
 	annualRate float64
 	currency   string
+}
+
+func (asd annualSalaryData) SalaryType() string {
+	return "ANNUAL"
 }
 
 func (asd annualSalaryData) Annual() float64 {
@@ -118,6 +126,10 @@ type hourlySalaryData struct {
 	currency   string
 }
 
+func (hsd hourlySalaryData) SalaryType() string {
+	return "HOURLY"
+}
+
 func (hsd hourlySalaryData) Annual() float64 {
 	return hsd.HourlyRate * 1950
 }
@@ -138,6 +150,10 @@ type hourlyRangeSalaryData struct {
 	lowerHourlyRate  float64
 	higherHourlyRate float64
 	currency         string
+}
+
+func (hsd hourlyRangeSalaryData) SalaryType() string {
+	return "HOURLY"
 }
 
 func (hsd hourlyRangeSalaryData) meanWage() float64 {
@@ -166,4 +182,5 @@ type SalaryData interface {
 	Hourly() float64
 	String() string
 	GetCurrency() string
+	SalaryType() string
 }
