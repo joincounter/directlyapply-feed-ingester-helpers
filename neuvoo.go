@@ -78,6 +78,7 @@ func NeuvooConverter(file *os.File) (*[]StandardJob, error) {
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
+						Category:    job.Category,
 					})
 				}
 			}

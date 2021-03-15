@@ -26,6 +26,7 @@ type StandardJob struct {
 	SalaryMin      float64   `bson:"salaryMinimum" json:"salaryMinimum"`
 	SalaryMax      float64   `bson:"salaryMaximum" json:"salaryMaximum"`
 	SalaryType     string    `bson:"salaryType" json:"salaryType"`
+	Category       string    `json:"category"`
 }
 
 // EstimatedValue standard calc for the jobs value
