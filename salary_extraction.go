@@ -60,6 +60,16 @@ func ExtractUSDSalaries(description string) SalaryData {
 			}
 			return hourlyRangeSalaryData{lowerHourlyRate: wageMin, higherHourlyRate: wageMax, currency: string(curr)}
 		}
+		wageMatchesNormalised := make([]float64, 0)
+		for i := 0; i < len(wageMatches); i++ {
+			norm, err := normaliseSalaries(wageMatches[i])
+			if err != nil {
+				continue
+			}
+			wageMatchesNormalised = append(wageMatchesNormalised, norm)
+		}
+		min, max := maxMinFloat64(wageMatchesNormalised...)
+		return hourlyRangeSalaryData{lowerHourlyRate: min, higherHourlyRate: max, currency: string(curr)}
 	}
 
 	return emptySalaryData{}
