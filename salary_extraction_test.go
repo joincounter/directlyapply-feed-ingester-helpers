@@ -70,3 +70,48 @@ func TestNormaliseSalaries(t *testing.T) {
 		})
 	}
 }
+
+func TextMaxMinFloat64(t *testing.T) {
+	examples := []struct{
+		name string
+		values []float64
+		min float64
+		max float64
+	}{
+		{
+			name: "nothing",
+			values: []float64{},
+			min: 0,
+			max: 0,
+		},
+		{
+			name: "one value",
+			values: []float64{5.67},
+			min: 5.67,
+			max: 5.67,
+		},
+		{
+			name: "two values",
+			values: []float64{7.78, 5.67},
+			min: 5.67,
+			max: 7.78,
+		},
+		{
+			name: "multiple values",
+			values: []float64{7.78, 5.67, 6.76, 11.34},
+			min: 5.67,
+			max: 11.34,
+		},
+	}
+	for i := 0; i < len(examples); i++ {
+		t.Run(examples[i].name, func(t *testing.T) {
+			min, max := maxMinFloat64(examples[i].values...)
+			if examples[i].min != min {
+				t.Errorf("Expected min value of %f but got %f", examples[i].min, min)
+			}
+			if examples[i].max != max {
+				t.Errorf("Expected max value of %f but got %f", examples[i].max, max)
+			}
+		})
+	}
+}

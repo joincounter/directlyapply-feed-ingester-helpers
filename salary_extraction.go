@@ -26,13 +26,14 @@ func ExtractUSDSalaries(description string) SalaryData {
 			}
 			annualMatchesNormalised = append(annualMatchesNormalised, norm)
 		}
-		// calculate the average 🙄
-		var total float64
-		for _, v := range annualMatchesNormalised {
-			total += v
+		if len(annualMatchesNormalised) == 0 {
+			return emptySalaryData{}
 		}
-		averageAnnualSalary := total / float64(len(annualMatchesNormalised))
-		return annualSalaryData{annualRate: averageAnnualSalary, currency: string(curr)}
+		if len(annualMatchesNormalised) == 1 {
+			return annualSalaryData{annualRate: annualMatchesNormalised[0], currency: string(curr)}
+		}
+		min, max := maxMinFloat64(annualMatchesNormalised...)
+		return annualSalaryRangeData{minAnnualRate: min, maxAnnualRate: max, currency: string(curr)}
 	}
 
 	wageRedux, err := regexp.Compile(`([£$€][0-9]?[0-9]\.[0-9][0-9]|[£$€][0-9]?[0-9]\s)`)
@@ -137,6 +138,40 @@ func (asd annualSalaryData) GetCurrency() string {
 	return asd.currency
 }
 
+type annualSalaryRangeData struct {
+	minAnnualRate float64
+	maxAnnualRate float64
+	currency   string
+}
+
+func (asd annualSalaryRangeData) SalaryType() string {
+	return "ANNUAL"
+}
+
+func (asd annualSalaryRangeData) SalaryMin() float64 {
+	return asd.minAnnualRate
+}
+
+func (asd annualSalaryRangeData) SalaryMax() float64 {
+	return asd.maxAnnualRate
+}
+
+func (asd annualSalaryRangeData) Annual() float64 {
+	return (asd.minAnnualRate + asd.maxAnnualRate)/2
+}
+
+func (asd annualSalaryRangeData) Hourly() float64 {
+	return (asd.minAnnualRate + asd.maxAnnualRate)/3900
+}
+
+func (asd annualSalaryRangeData) String() string {
+	return fmt.Sprintf("Between %s%f and %s%f per annum", asd.currency, asd.minAnnualRate, asd.currency, asd.maxAnnualRate)
+}
+
+func (asd annualSalaryRangeData) GetCurrency() string {
+	return asd.currency
+}
+
 type hourlySalaryData struct {
 	HourlyRate float64
 	currency   string
@@ -217,4 +252,26 @@ type SalaryData interface {
 	SalaryType() string
 	SalaryMin() float64
 	SalaryMax() float64
+}
+
+func maxMinFloat64(values ...float64) (float64, float64) {
+	if len(values) == 0 {
+		return 0, 0
+	}
+	value := values[0]
+	if len(values) == 1 {
+		return value, value
+	}
+	minValue := value
+	maxValue := value
+	for i := 1; i < len(values); i++ {
+		v := values[i]
+		if v < minValue {
+			minValue = v
+		}
+		if v > maxValue {
+			maxValue = v
+		}
+	}
+	return minValue, maxValue
 }
