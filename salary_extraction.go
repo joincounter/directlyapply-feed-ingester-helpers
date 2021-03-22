@@ -82,6 +82,7 @@ func normaliseSalaries(extracted string) (float64, error) {
 	extracted = strings.Replace(extracted, ",", "", 1)
 	extracted = strings.Replace(extracted, "K", "000", 1)
 	extracted = strings.Replace(extracted, "k", "000", 1)
+	extracted = strings.Replace(extracted, " ", "", 1)
 	return strconv.ParseFloat(extracted, 64)
 }
 
