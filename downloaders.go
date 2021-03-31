@@ -102,3 +102,38 @@ func DownloadAndUnzipToDisk(URL string) (*string, error) {
 
 	return &fileName, nil
 }
+
+func DownloadToDiskResumeLibrary(URL string) (*string, error) {
+	os.MkdirAll("./downloadedFiles", os.ModePerm)
+	fileName := fmt.Sprintf("downloadedFiles/notzippedfile_%s.xml", uuid.New().String())
+
+	req, requestErr := http.NewRequest("GET", URL, nil)
+	if requestErr != nil {
+		return nil, requestErr
+	}
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36")
+
+	res, excutionError := http.DefaultClient.Do(req)
+	if excutionError != nil {
+		return nil, excutionError
+	}
+	defer res.Body.Close()
+
+	file, fileOpenError := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
+
+	defer file.Close()
+
+	if fileOpenError != nil {
+		return nil, fileOpenError
+	}
+
+	fmt.Println(res.Status)
+
+	_, writeErr := io.Copy(file, res.Body)
+
+	if writeErr != nil {
+		return nil, writeErr
+	}
+
+	return &fileName, nil
+}
