@@ -22,6 +22,7 @@ type jobtargetJob struct {
 	City        string  `xml:"city"`
 	State       string  `xml:"state"`
 	Country     string  `xml:"country"`
+	ZIP     	string  `xml:"zip"`
 	Jobtype     string  `xml:"jobtype"`
 	Description string  `xml:"description"`
 	URL         string  `xml:"apply_url"`
@@ -79,6 +80,8 @@ func JobTargetConverter(file *os.File) (*[]StandardJob, error) {
 						Date:        date,
 						Country:     job.Country,
 						Category:    job.Category,
+						ZIP: 		 job.ZIP,
+						State: 		 job.State,
 					})
 				}
 			}
