@@ -38,6 +38,8 @@ type apploiJob struct {
 // apploiConverter convert apploi jobs to standard jobs
 func ApploiConverter(file *os.File) (*[]StandardJob, error) {
 
+	fmt.Println("Sup Apploi")
+
 	jobs := make([]StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
