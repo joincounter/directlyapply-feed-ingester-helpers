@@ -9,9 +9,9 @@ import (
 )
 
 type apploiJobs struct {
-	XMLName xml.Name    `xml:"jobs"`
+	XMLName xml.Name    `xml:"channel"`
 	Text    string      `xml:",chardata"`
-	Job     []apploiJob `xml:"job"`
+	Job     []apploiJob `xml:"item"`
 }
 
 type apploiJob struct {
