@@ -9,7 +9,7 @@ import (
 )
 
 type apploiJobs struct {
-	XMLName xml.Name    `xml:"channel"`
+	XMLName xml.Name    `xml:"rss"`
 	Text    string      `xml:",chardata"`
 	Job     []apploiJob `xml:"item"`
 }
@@ -57,7 +57,7 @@ func ApploiConverter(file *os.File) (*[]StandardJob, error) {
 		// Inspect the type of the token just read.
 		switch se := token.(type) {
 		case xml.StartElement:
-			if se.Name.Local == "job" {
+			if se.Name.Local == "item" {
 				var job apploiJob
 				err = decoder.DecodeElement(&job, &se)
 
