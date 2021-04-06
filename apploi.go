@@ -66,7 +66,9 @@ func ApploiConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				date, err := time.Parse(time.RFC3339, job.Date)
+				// Wed, 27 Jan 2021 05:00:03 GMT
+
+				date, err := time.Parse(time.RFC1123, job.Date)
 
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
