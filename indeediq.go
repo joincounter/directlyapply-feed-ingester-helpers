@@ -68,9 +68,9 @@ func IndeedConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				// Wed, 27 Jan 2021 05:00:03 GMT
+				//08/03/2021
 
-				date, err := time.Parse(time.RFC1123, job.Date)
+				date, err := time.Parse("02/01/2006", job.Date)
 
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
