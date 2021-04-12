@@ -60,7 +60,7 @@ func IndeedConverter(file *os.File) (*[]StandardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job apploiJob
+				var job indeedJob
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
@@ -87,9 +87,6 @@ func IndeedConverter(file *os.File) (*[]StandardJob, error) {
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
-						Category:    job.Category,
-						ZIP: 		 job.ZIP,
-						State: 		 job.State,
 					})
 				}
 			}
