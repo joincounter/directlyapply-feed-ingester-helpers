@@ -16,9 +16,11 @@ func SaveURLsToRedis(connectionString string, feedname string, urls []string) er
 		return err
 	}
 
-	_, err = conn.Do("SADD", append([]string{feedname}, urls...))
-	if err != nil {
-		return err
+	for _, url := range urls {
+		_, err = conn.Do("SADD", feedname, url)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
