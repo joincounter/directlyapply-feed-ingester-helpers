@@ -11,7 +11,7 @@ import (
 )
 
 // FetchPersistentJobs fetches limited job data from the indexPersistent collection
-func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr string) (*[]PersistentIndexJob, error) {
+func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr string, countryCode string) (*[]PersistentIndexJob, error) {
 	appcastJobs := make([]PersistentIndexJob, 0)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
@@ -19,7 +19,7 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 		return nil, err
 	}
 
-	cur, err := client.Database("directlyapplyjobs").Collection("indexPersistent").Find(ctx, filter, &options.FindOptions{Projection: bson.M{"url": 1}})
+	cur, err := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").Find(ctx, filter, &options.FindOptions{Projection: bson.M{"url": 1}})
 	if err != nil {
 		return nil, err
 	}
@@ -34,14 +34,14 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 }
 
 // DeletePersistentJobs remove drinks from
-func DeletePersistentJobs(ctx context.Context, ids []string, serverAddr string) (*mongo.UpdateResult, error) {
+func DeletePersistentJobs(ctx context.Context, ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
 		return nil, err
 	}
 	query := bson.M{"_id": bson.M{"$in": ids}}
 	update := bson.M{"$set": bson.M{"deletedFromIndex": true, "deletedTime": time.Now()}, "$unset": bson.M{"description": ""}}
-	return client.Database("directlyapplyjobs").Collection("indexPersistent").UpdateMany(ctx, query, update)
+	return client.Database(countryDatabases[countryCode]).Collection("indexPersistent").UpdateMany(ctx, query, update)
 }
 
 // PersistentIndexJob minimum representaion of a job
@@ -53,4 +53,10 @@ type PersistentIndexJob struct {
 	LocationID uuid.UUID `db:"location_id"`
 	CPA        float32   `db:"cpa"`
 	CPC        float32   `db:"cpc"`
+}
+
+var countryDatabases = map[string]string{
+	"UK": "counterjobs",
+	"US": "directlyapplyjobs",
+	"CA": "directlyapplyjobs",
 }
