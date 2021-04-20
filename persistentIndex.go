@@ -11,17 +11,17 @@ import (
 )
 
 // FetchPersistentJobs fetches limited job data from the indexPersistent collection
-func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr string, countryCode string) (*[]PersistentIndexJob, error) {
+func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
 	appcastJobs := make([]PersistentIndexJob, 0)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
-		return nil, err
+		return appcastJobs, err
 	}
 
 	cur, err := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").Find(ctx, filter, &options.FindOptions{Projection: bson.M{"url": 1}})
 	if err != nil {
-		return nil, err
+		return appcastJobs, err
 	}
 	defer cur.Close(ctx)
 	for cur.Next(context.Background()) {
@@ -30,7 +30,7 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 		appcastJobs = append(appcastJobs, job)
 	}
 
-	return &appcastJobs, nil
+	return appcastJobs, nil
 }
 
 // DeletePersistentJobs remove drinks from
