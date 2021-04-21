@@ -1,8 +1,6 @@
 package helpers
 
 import (
-	"fmt"
-
 	"github.com/gomodule/redigo/redis"
 )
 
@@ -19,7 +17,7 @@ func ExcludeURLSubset(connectionString, primaryFeedname, secondaryFeedname strin
 		return urls, err
 	}
 
-	fmt.Printf("%+v\n", data)
+	urls = data.([]string)
 
 	return urls, nil
 }
