@@ -1,8 +1,28 @@
 package helpers
 
 import (
+	"fmt"
+
 	"github.com/gomodule/redigo/redis"
 )
+
+func ExcludeURLSubset(connectionString, primaryFeedname, secondaryFeedname string) ([]string, error) {
+	urls := make([]string, 0)
+	conn, err := redis.DialURL(connectionString)
+	if err != nil {
+		return urls, err
+	}
+	defer conn.Close()
+
+	data, err := conn.Do("SDIFF", primaryFeedname, secondaryFeedname)
+	if err != nil {
+		return urls, err
+	}
+
+	fmt.Printf("%+v\n", data)
+
+	return urls, nil
+}
 
 func SaveURLsToRedis(connectionString string, feedname string, urls []string) error {
 	conn, err := redis.DialURL(connectionString)
