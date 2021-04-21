@@ -4,8 +4,8 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
-func ExcludeURLSubset(connectionString, primaryFeedname, secondaryFeedname string) ([]string, error) {
-	urls := make([]string, 0)
+func ExcludeURLSubset(connectionString, primaryFeedname, secondaryFeedname string) ([]interface{}, error) {
+	urls := make([]interface{}, 0)
 	conn, err := redis.DialURL(connectionString)
 	if err != nil {
 		return urls, err
@@ -17,7 +17,7 @@ func ExcludeURLSubset(connectionString, primaryFeedname, secondaryFeedname strin
 		return urls, err
 	}
 
-	urls = data.([]string)
+	urls = data.([]interface{})
 
 	return urls, nil
 }
