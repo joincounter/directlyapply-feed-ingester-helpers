@@ -4,6 +4,18 @@ import (
 	"github.com/gomodule/redigo/redis"
 )
 
+func RenameRedisKey(connectionString, oldKeyName, newKeyName string) error {
+	conn, err := redis.DialURL(connectionString)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	_, err = conn.Do("RENAME", oldKeyName, newKeyName)
+
+	return err
+}
+
 func ExcludeURLSubset(connectionString, primaryFeedname, secondaryFeedname string) ([]string, error) {
 	urls := make([]string, 0)
 	conn, err := redis.DialURL(connectionString)
