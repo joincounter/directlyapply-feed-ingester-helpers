@@ -32,8 +32,8 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 	return appcastJobs, nil
 }
 
-// DeletePersistentJobsClient remove drinks from
-func DeletePersistentJobsClient(ctx context.Context, ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
+// DeletePersistentJobs remove drinks from
+func DeletePersistentJobs(ctx context.Context, ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
 		return nil, err
@@ -41,13 +41,6 @@ func DeletePersistentJobsClient(ctx context.Context, ids []string, serverAddr st
 	query := bson.M{"_id": bson.M{"$in": ids}}
 	update := bson.M{"$set": bson.M{"deletedFromIndex": true, "deletedTime": time.Now()}, "$unset": bson.M{"description": ""}}
 	return client.Database(countryDatabases[countryCode]).Collection("indexPersistent").UpdateMany(ctx, query, update)
-}
-
-// DeletePersistentJobs remove drinks from
-func DeletePersistentJobs(client mongo.Client, ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
-	query := bson.M{"_id": bson.M{"$in": ids}}
-	update := bson.M{"$set": bson.M{"deletedFromIndex": true, "deletedTime": time.Now()}, "$unset": bson.M{"description": ""}}
-	return client.Database(countryDatabases[countryCode]).Collection("indexPersistent").UpdateMany(context.Background(), query, update)
 }
 
 // PersistentIndexJob minimum representaion of a job
