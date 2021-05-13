@@ -11,7 +11,7 @@ import (
 
 // FetchPersistentJobs fetches limited job data from the indexPersistent collection
 func FetchPersistentJobs(filter interface{}, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 	appcastJobs := make([]PersistentIndexJob, 0)
 
@@ -36,7 +36,7 @@ func FetchPersistentJobs(filter interface{}, serverAddr string, countryCode stri
 
 // FetchPersistentJobsFromURLs fetches limited job data from the indexPersistent collection
 func FetchPersistentJobsFromURLs(urls []string, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 	appcastJobs := make([]PersistentIndexJob, 0)
 
