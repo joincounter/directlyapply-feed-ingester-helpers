@@ -10,7 +10,9 @@ import (
 )
 
 // FetchPersistentJobs fetches limited job data from the indexPersistent collection
-func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
+func FetchPersistentJobs(filter interface{}, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	appcastJobs := make([]PersistentIndexJob, 0)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
@@ -33,7 +35,9 @@ func FetchPersistentJobs(ctx context.Context, filter interface{}, serverAddr str
 }
 
 // FetchPersistentJobsFromURLs fetches limited job data from the indexPersistent collection
-func FetchPersistentJobsFromURLs(ctx context.Context, urls []string, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
+func FetchPersistentJobsFromURLs(urls []string, serverAddr string, countryCode string) ([]PersistentIndexJob, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	appcastJobs := make([]PersistentIndexJob, 0)
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
@@ -56,7 +60,9 @@ func FetchPersistentJobsFromURLs(ctx context.Context, urls []string, serverAddr 
 }
 
 // DeletePersistentJobs remove drinks from
-func DeletePersistentJobs(ctx context.Context, ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
+func DeletePersistentJobs(ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
 		return nil, err
