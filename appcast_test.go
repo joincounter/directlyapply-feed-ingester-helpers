@@ -5,20 +5,21 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 )
 
-type appcastRoot struct {
+type appcastRootTest struct {
 	XMLName xml.Name    `xml:"source"`
-	Jobs    appcastJobs `xml:"jobs"`
+	Jobs    appcastJobsTest `xml:"jobs"`
 }
 
-type appcastJobs struct {
+type appcastJobsTest struct {
 	XMLName xml.Name     `xml:"jobs"`
-	Jobs    []rawAppCast `xml:"job"`
+	Jobs    []rawAppCastTest `xml:"job"`
 }
 
-type rawAppCast struct {
+type rawAppCastTest struct {
 	XMLName     xml.Name `xml:"job"`
 	Title       string   `xml:"title"`
 	Company     string   `xml:"company"`
@@ -33,12 +34,12 @@ type rawAppCast struct {
 	Location    string   `xml:"location"`
 	State       string   `xml:"state"`
 	Category    string   `xml:"category"`
-	CPC         float32  `xml:"cpc"`
-	CPA         float32  `xml:"cpa"`
+	CPC         string  `xml:"cpc"`
+	CPA         string  `xml:"cpa"`
 }
 
 // AppcastConverter convert Appcast jobs to standard
-func AppcastConverter(file *os.File) (*[]StandardJob, error) {
+func AppcastConverterTest(file *os.File) (*[]StandardJob, error) {
 
 	jobs := make([]StandardJob, 0)
 
@@ -58,7 +59,7 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job rawAppCast
+				var job rawAppCastTest
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
@@ -71,6 +72,10 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
+					newCpa, _ := strconv.ParseFloat(job.CPA, 32)
+					newCpc, _ := strconv.ParseFloat(job.CPC, 32)
+
+
 					jobs = append(jobs, StandardJob{
 						Title:       job.Title,
 						JobID:       job.SourceID,
@@ -81,8 +86,8 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 						State:        job.State,
 						ZIP:		job.Zip,
 						Location: job.Location,
-						CPA:         job.CPA,
-						CPC:         job.CPC,
+						CPA:          float32(newCpa),
+						CPC:         float32(newCpc),
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
