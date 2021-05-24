@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -42,6 +43,9 @@ func DirectlyApplyConverter(file *os.File) (*[]StandardJob, error) {
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
+					newCpa, _ := strconv.ParseFloat(job.CPA, 32)
+					newCpc, _ := strconv.ParseFloat(job.CPC, 32)
+
 					jobs = append(jobs, StandardJob{
 						Title:       job.Title,
 						JobID:       job.SourceID,
@@ -49,11 +53,11 @@ func DirectlyApplyConverter(file *os.File) (*[]StandardJob, error) {
 						Company:     job.Company,
 						Slug:        GenerateSlug(job.Company),
 						City:        job.City,
-						State:        job.State,
-						ZIP:		job.Zip,
-						Location: job.Location,
-						CPA:         job.CPA,
-						CPC:         job.CPC,
+						State:       job.State,
+						ZIP:         job.Zip,
+						Location:    job.Location,
+						CPA:         float32(newCpa),
+						CPC:         float32(newCpc),
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,

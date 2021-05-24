@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -33,8 +34,8 @@ type rawAppCast struct {
 	Location    string   `xml:"location"`
 	State       string   `xml:"state"`
 	Category    string   `xml:"category"`
-	CPC         float32  `xml:"cpc"`
-	CPA         float32  `xml:"cpa"`
+	CPC         string   `xml:"cpc"`
+	CPA         string   `xml:"cpa"`
 }
 
 // AppcastConverter convert Appcast jobs to standard
@@ -71,6 +72,9 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
+					newCpa, _ := strconv.ParseFloat(job.CPA, 32)
+					newCpc, _ := strconv.ParseFloat(job.CPC, 32)
+
 					jobs = append(jobs, StandardJob{
 						Title:       job.Title,
 						JobID:       job.SourceID,
@@ -78,11 +82,11 @@ func AppcastConverter(file *os.File) (*[]StandardJob, error) {
 						Company:     job.Company,
 						Slug:        GenerateSlug(job.Company),
 						City:        job.City,
-						State:        job.State,
-						ZIP:		job.Zip,
-						Location: job.Location,
-						CPA:         job.CPA,
-						CPC:         job.CPC,
+						State:       job.State,
+						ZIP:         job.Zip,
+						Location:    job.Location,
+						CPA:         float32(newCpa),
+						CPC:         float32(newCpc),
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
