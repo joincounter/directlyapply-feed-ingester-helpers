@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -61,13 +62,22 @@ func FetchPersistentJobsFromURLs(urls []string, serverAddr string, countryCode s
 
 // DeletePersistentJobs remove drinks from
 func DeletePersistentJobs(ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
+
+
+	jobObjectIdsNotInFeed := make([]primitive.ObjectID, 0)
+	for i := 0; i < len(ids); i++ {
+		objectId, _ := primitive.ObjectIDFromHex(ids[i])
+		jobObjectIdsNotInFeed = append(jobObjectIdsNotInFeed, objectId)
+	}
+
+
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
 		return nil, err
 	}
-	query := bson.M{"_id": bson.M{"$in": ids}}
+	query := bson.M{"_id": bson.M{"$in": jobObjectIdsNotInFeed}}
 	update := bson.M{"$set": bson.M{"deletedFromIndex": true, "deletedTime": time.Now()}, "$unset": bson.M{"description": ""}}
 	return client.Database(countryDatabases[countryCode]).Collection("indexPersistent").UpdateMany(ctx, query, update)
 }
