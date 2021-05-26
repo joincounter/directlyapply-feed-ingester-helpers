@@ -62,16 +62,12 @@ func FetchPersistentJobsFromURLs(urls []string, serverAddr string, countryCode s
 
 // DeletePersistentJobs remove drinks from
 func DeletePersistentJobs(ids []string, serverAddr string, countryCode string) (*mongo.UpdateResult, error) {
-
-
 	jobObjectIdsNotInFeed := make([]primitive.ObjectID, 0)
 	for i := 0; i < len(ids); i++ {
 		objectId, _ := primitive.ObjectIDFromHex(ids[i])
 		jobObjectIdsNotInFeed = append(jobObjectIdsNotInFeed, objectId)
 	}
-
-
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Minute)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
