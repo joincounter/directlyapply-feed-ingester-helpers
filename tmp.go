@@ -24,7 +24,6 @@ type tmpJob struct {
 	CPC         float32 `xml:"cpc"`
 }
 
-// NeuvooConverter convert Neuvoo jobs to standard jobs
 func TmpConverter(file *os.File) (*[]StandardJob, error) {
 
 	jobs := make([]StandardJob, 0)
