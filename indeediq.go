@@ -15,7 +15,6 @@ type indeedJobs struct {
 }
 
 type indeedJob struct {
-
 	Jobid       string  `xml:"id"`
 	Date        string  `xml:"date"`
 	Title       string  `xml:"title"`
@@ -27,16 +26,13 @@ type indeedJob struct {
 	Description string  `xml:"description"`
 	CPC         float32 `xml:"bid-value"`
 
-
-
-
 	// Text        string  `xml:",chardata"`
 	// Category    string  `xml:"category"`
 	// State       string  `xml:"state"`
 	// ZIP     	string  `xml:"zipcode"`
 	// Currency    string  `xml:"currency"`
 	// Logo        string  `xml:"logo"`
-	
+
 }
 
 // apploiConverter convert apploi jobs to standard jobs
@@ -82,7 +78,7 @@ func IndeedConverter(file *os.File) (*[]StandardJob, error) {
 						Company:     job.Company,
 						Slug:        GenerateSlug(job.Company),
 						City:        job.City,
-						CPA:         job.CPC,
+						CPA:         job.CPC * 10,
 						CPC:         0,
 						Description: job.Description,
 						Date:        date,
