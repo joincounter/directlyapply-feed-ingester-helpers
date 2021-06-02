@@ -127,7 +127,9 @@ func DownloadToDiskResumeLibrary(URL string) (*string, error) {
 		return nil, fileOpenError
 	}
 
-	fmt.Println(res.Status)
+	if res.StatusCode != 200 {
+		return nil, errors.New("server did not return 200")
+	}
 
 	_, writeErr := io.Copy(file, res.Body)
 
