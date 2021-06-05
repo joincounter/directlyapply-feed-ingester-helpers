@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -6,6 +6,8 @@ import (
 	"io"
 	"os"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
 type indeedJobs struct {
@@ -36,9 +38,9 @@ type indeedJob struct {
 }
 
 // apploiConverter convert apploi jobs to standard jobs
-func IndeedConverter(file *os.File) (*[]StandardJob, error) {
+func IndeedConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -71,12 +73,12 @@ func IndeedConverter(file *os.File) (*[]StandardJob, error) {
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
-					jobs = append(jobs, StandardJob{
+					jobs = append(jobs, extern_helpers.StandardJob{
 						Title:       job.Title,
 						JobID:       job.Jobid,
 						URL:         job.URL,
 						Company:     job.Company,
-						Slug:        GenerateSlug(job.Company),
+						Slug:        extern_helpers.GenerateSlug(job.Company),
 						City:        job.City,
 						CPA:         0,
 						CPC:         job.CPC,

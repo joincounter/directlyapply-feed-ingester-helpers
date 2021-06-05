@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -7,11 +7,13 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
 type resumeLibJobs struct {
-	XMLName xml.Name   `xml:"source"`
-	Text    string     `xml:",chardata"`
+	XMLName xml.Name       `xml:"source"`
+	Text    string         `xml:",chardata"`
 	Job     []resumeLibJob `xml:"job"`
 }
 
@@ -22,25 +24,25 @@ type resumeLibJob struct {
 	Jobtype     string `xml:"job_type"`
 	Description string `xml:"description"`
 	Country     string `xml:"country"`
-	Location    string  `xml:"location_text"`
+	Location    string `xml:"location_text"`
 	Company     string `xml:"company"`
 	Date        string `xml:"post_date"`
 	URL         string `xml:"apply_url"`
 	// Addedd Below
-	City        string `xml:"city"`
-	State       string `xml:"state"`
+	City  string `xml:"city"`
+	State string `xml:"state"`
 	// Excluded
-	ZIP         string `xml:"postalcode"`
-	Category    string `xml:"category"`
-	Sponsored   string   `xml:"sponsored"`
-	CPC         float32 `xml:"cpc"`
-	CPA         float32 `xml:"cpa"`
+	ZIP       string  `xml:"postalcode"`
+	Category  string  `xml:"category"`
+	Sponsored string  `xml:"sponsored"`
+	CPC       float32 `xml:"cpc"`
+	CPA       float32 `xml:"cpa"`
 }
 
 // RecruiticsConverter convert Recruitics jobs to standard jobs
-func ResumeLibraryConverter(file *os.File) (*[]StandardJob, error) {
+func ResumeLibraryConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -74,16 +76,16 @@ func ResumeLibraryConverter(file *os.File) (*[]StandardJob, error) {
 				}
 
 				job.City = strings.Split(job.Location, ",")[0]
-				
+
 				job.CPA = 1.50
 				job.CPC = 1.50
 
-				jobs = append(jobs, StandardJob{
+				jobs = append(jobs, extern_helpers.StandardJob{
 					Title:       job.Title,
 					JobID:       job.Jobid,
 					URL:         job.URL,
 					Company:     job.Company,
-					Slug:        GenerateSlug(job.Company),
+					Slug:        extern_helpers.GenerateSlug(job.Company),
 					City:        job.City,
 					Location:    job.Location,
 					CPA:         job.CPA,

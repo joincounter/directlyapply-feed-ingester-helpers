@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -8,38 +8,39 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
 type recruiticsJobs struct {
-	XMLName xml.Name   `xml:"source"`
-	Text    string     `xml:",chardata"`
+	XMLName xml.Name        `xml:"source"`
+	Text    string          `xml:",chardata"`
 	Job     []recruiticsJob `xml:"job"`
 }
 
 type recruiticsJob struct {
-	Title       string `xml:"title"`
-	Date        string `xml:"date"`
-	Jobid       string `xml:"referencenumber"`
-	URL         string `xml:"url"`
-	Company     string `xml:"company"`
-	City        string `xml:"city"`
+	Title       string  `xml:"title"`
+	Date        string  `xml:"date"`
+	Jobid       string  `xml:"referencenumber"`
+	URL         string  `xml:"url"`
+	Company     string  `xml:"company"`
+	City        string  `xml:"city"`
 	Location    string  `xml:"location"`
-	State       string `xml:"state"`
-	Country     string `xml:"country"`
-	ZIP         string `xml:"postalcode"`
-	Description string `xml:"description"`
-	Category    string `xml:"category"`
-	Jobtype     string `xml:"jobtype"`
-	Sponsored   string   `xml:"sponsored"`
+	State       string  `xml:"state"`
+	Country     string  `xml:"country"`
+	ZIP         string  `xml:"postalcode"`
+	Description string  `xml:"description"`
+	Category    string  `xml:"category"`
+	Jobtype     string  `xml:"jobtype"`
+	Sponsored   string  `xml:"sponsored"`
 	CPC         float32 `xml:"cpc"`
 	CPA         float32 `xml:"cpa"`
-	
 }
 
 // RecruiticsConverter convert Recruitics jobs to standard jobs
-func RecruiticsConverter(file *os.File) (*[]StandardJob, error) {
+func RecruiticsConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -86,15 +87,14 @@ func RecruiticsConverter(file *os.File) (*[]StandardJob, error) {
 
 				}
 
-
 				job.Location = job.City + ", " + job.State + ", " + job.Country
 
-				jobs = append(jobs, StandardJob{
+				jobs = append(jobs, extern_helpers.StandardJob{
 					Title:       job.Title,
 					JobID:       job.Jobid,
 					URL:         job.URL,
 					Company:     job.Company,
-					Slug:        GenerateSlug(job.Company),
+					Slug:        extern_helpers.GenerateSlug(job.Company),
 					City:        job.City,
 					Location:    job.Location,
 					CPA:         job.CPA,

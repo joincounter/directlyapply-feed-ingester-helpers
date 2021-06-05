@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -6,27 +6,39 @@ import (
 	"io"
 	"os"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
-type tmpJob struct {
+type jobtargetJobs struct {
+	XMLName xml.Name       `xml:"jobs"`
+	Text    string         `xml:",chardata"`
+	Job     []jobtargetJob `xml:"job"`
+}
+
+type jobtargetJob struct {
 	Text        string  `xml:",chardata"`
-	Title       string  `xml:"title"`
-	ID          string  `xml:"id"`
-	Date        string  `xml:"date"`
-	URL         string  `xml:"url"`
-	Company     string  `xml:"company"`
+	Jobid       string  `xml:"name"`
+	Title       string  `xml:"position"`
+	Category    string  `xml:"function"`
 	City        string  `xml:"city"`
 	State       string  `xml:"state"`
 	Country     string  `xml:"country"`
-	PostalCode  string  `xml:"postalcode"`
+	ZIP         string  `xml:"zip"`
+	Jobtype     string  `xml:"jobtype"`
 	Description string  `xml:"description"`
-	Salary      string  `xml:"salary"`
+	URL         string  `xml:"apply_url"`
+	Date        string  `xml:"start"`
 	CPC         float32 `xml:"cpc"`
+	Currency    string  `xml:"currency"`
+	Logo        string  `xml:"logo"`
+	Company     string  `xml:"company"`
 }
 
-func TmpConverter(file *os.File) (*[]StandardJob, error) {
+// JobTargetConverter convert JobTarget jobs to standard jobs
+func JobTargetConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -44,7 +56,7 @@ func TmpConverter(file *os.File) (*[]StandardJob, error) {
 		switch se := token.(type) {
 		case xml.StartElement:
 			if se.Name.Local == "job" {
-				var job tmpJob
+				var job jobtargetJob
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
@@ -52,24 +64,25 @@ func TmpConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				date, err := time.Parse("Mon, 02 Jan 2006 15:04:05 MST", job.Date)
+				date, err := time.Parse(time.RFC3339, job.Date)
 
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
-					jobs = append(jobs, StandardJob{
+					jobs = append(jobs, extern_helpers.StandardJob{
 						Title:       job.Title,
-						JobID:       job.ID,
+						JobID:       job.Jobid,
 						URL:         job.URL,
 						Company:     job.Company,
-						Slug:        GenerateSlug(job.Company),
+						Slug:        extern_helpers.GenerateSlug(job.Company),
 						City:        job.City,
 						CPA:         0,
 						CPC:         job.CPC,
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
-						ZIP:         job.PostalCode,
+						Category:    job.Category,
+						ZIP:         job.ZIP,
 						State:       job.State,
 					})
 				}

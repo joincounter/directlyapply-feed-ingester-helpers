@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
 type rawCVLibrary struct {
@@ -34,9 +36,9 @@ type rawCVLibrary struct {
 }
 
 // RecruiticsConverter convert Recruitics jobs to standard jobs
-func CVLibraryConverter(file *os.File) (*[]StandardJob, error) {
+func CVLibraryConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -71,12 +73,12 @@ func CVLibraryConverter(file *os.File) (*[]StandardJob, error) {
 
 				job.City = strings.Split(job.Location, ",")[0]
 
-				jobs = append(jobs, StandardJob{
+				jobs = append(jobs, extern_helpers.StandardJob{
 					Title:       job.Title,
 					JobID:       job.Jobref,
 					URL:         job.URL,
 					Company:     job.Company,
-					Slug:        GenerateSlug(job.Company),
+					Slug:        extern_helpers.GenerateSlug(job.Company),
 					City:        job.City,
 					Location:    job.Location,
 					CPA:         2.0,

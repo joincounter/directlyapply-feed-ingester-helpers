@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
 type joveoJobs struct {
@@ -34,9 +36,9 @@ type joveoJob struct {
 }
 
 // JoveoConverter convert Joveo jobs to standard jobs
-func JoveoConverter(file *os.File) (*[]StandardJob, error) {
+func JoveoConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -89,12 +91,12 @@ func JoveoConverter(file *os.File) (*[]StandardJob, error) {
 					return float32(cpc)
 				}
 
-				jobs = append(jobs, StandardJob{
+				jobs = append(jobs, extern_helpers.StandardJob{
 					Title:       job.Title,
 					JobID:       job.Jobid,
 					URL:         job.URL,
 					Company:     job.Company,
-					Slug:        GenerateSlug(job.Company),
+					Slug:        extern_helpers.GenerateSlug(job.Company),
 					City:        job.City,
 					CPA:         tryParseCPA(job.CPA),
 					CPC:         tryParseCPC(job.CPC),

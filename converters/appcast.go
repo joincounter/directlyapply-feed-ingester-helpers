@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -7,12 +7,43 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
-// AppcastConverter convert Appcast jobs to standard
-func DirectlyApplyConverter(file *os.File) (*[]StandardJob, error) {
+type appcastRoot struct {
+	XMLName xml.Name    `xml:"source"`
+	Jobs    appcastJobs `xml:"jobs"`
+}
 
-	jobs := make([]StandardJob, 0)
+type appcastJobs struct {
+	XMLName xml.Name     `xml:"jobs"`
+	Jobs    []rawAppCast `xml:"job"`
+}
+
+type rawAppCast struct {
+	XMLName     xml.Name `xml:"job"`
+	Title       string   `xml:"title"`
+	Company     string   `xml:"company"`
+	Description string   `xml:"body"`
+	URL         string   `xml:"url"`
+	City        string   `xml:"city"`
+	Posted      string   `xml:"posted_at"`
+	Type        string   `xml:"job_type"`
+	SourceID    string   `xml:"job_reference"`
+	Country     string   `xml:"country"`
+	Zip         string   `xml:"zip"`
+	Location    string   `xml:"location"`
+	State       string   `xml:"state"`
+	Category    string   `xml:"category"`
+	CPC         string   `xml:"cpc"`
+	CPA         string   `xml:"cpa"`
+}
+
+// AppcastConverter convert Appcast jobs to standard
+func AppcastConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
+
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -38,7 +69,7 @@ func DirectlyApplyConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				date, err := time.Parse("Mon, 2 Jan 2006 15:04:05 MST", job.Posted)
+				date, err := time.Parse("2006-01-02", job.Posted)
 
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
@@ -46,12 +77,12 @@ func DirectlyApplyConverter(file *os.File) (*[]StandardJob, error) {
 					newCpa, _ := strconv.ParseFloat(job.CPA, 32)
 					newCpc, _ := strconv.ParseFloat(job.CPC, 32)
 
-					jobs = append(jobs, StandardJob{
+					jobs = append(jobs, extern_helpers.StandardJob{
 						Title:       job.Title,
 						JobID:       job.SourceID,
 						URL:         job.URL,
 						Company:     job.Company,
-						Slug:        GenerateSlug(job.Company),
+						Slug:        extern_helpers.GenerateSlug(job.Company),
 						City:        job.City,
 						State:       job.State,
 						ZIP:         job.Zip,

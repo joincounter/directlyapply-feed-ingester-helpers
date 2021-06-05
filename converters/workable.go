@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/json"
@@ -7,6 +7,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
 type workableJobs struct {
@@ -33,10 +35,10 @@ type workableCompany struct {
 }
 
 // NeuvooConverter convert Neuvoo jobs to standard jobs
-func WorkableConverter(file *os.File) (*[]StandardJob, error) {
+func WorkableConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
 	var jobsTemp workableJobs
-	jobsFinal := make([]StandardJob, 0)
+	jobsFinal := make([]extern_helpers.StandardJob, 0)
 	byteValue, _ := ioutil.ReadAll(file)
 
 	err := json.Unmarshal(byteValue, &jobsTemp)
@@ -50,14 +52,14 @@ func WorkableConverter(file *os.File) (*[]StandardJob, error) {
 		if err != nil {
 			fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 		}
-		jobsFinal = append(jobsFinal, StandardJob{
+		jobsFinal = append(jobsFinal, extern_helpers.StandardJob{
 			Title:       job.Title,
 			Description: job.Description + job.Requirements + job.Benefits,
 			Company:     job.Company.Name,
 			JobID:       job.Jobid,
 			City:        strings.Split(job.Location[0], ", ")[0],
 			URL:         job.URL,
-			Slug:        GenerateSlug(job.Company.Name),
+			Slug:        extern_helpers.GenerateSlug(job.Company.Name),
 			CPA:         0,
 			CPC:         0,
 			Country:     strings.Split(job.Location[0], ", ")[len(strings.Split(job.Location[0], ", "))-1],

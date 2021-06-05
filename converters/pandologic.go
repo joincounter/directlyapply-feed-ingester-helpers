@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 	"golang.org/x/text/encoding/charmap"
 )
 
@@ -56,8 +57,8 @@ type jobsPando struct {
 	Job          []rawPando `xml:"job"`
 }
 
-func PandoLogicConverter(file *os.File) (*[]StandardJob, error) {
-	jobs := make([]StandardJob, 0)
+func PandoLogicConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	var j1 jobsPando
 
@@ -74,14 +75,14 @@ func PandoLogicConverter(file *os.File) (*[]StandardJob, error) {
 			fmt.Println(err.Error())
 		}
 
-		sj := StandardJob{
+		sj := extern_helpers.StandardJob{
 			JobID:       pandoJob.JobID,
 			Title:       decodeWindows1252String(pandoJob.Title),
 			Description: decodeWindows1252String(pandoJob.Description),
 			Date:        date,
 			URL:         pandoJob.URL,
 			Company:     pandoJob.Company,
-			Slug:        GenerateSlug(pandoJob.Company),
+			Slug:        extern_helpers.GenerateSlug(pandoJob.Company),
 			City:        pandoJob.City,
 			CPA:         pandoJob.CPA,
 			CPC:         pandoJob.CPC,

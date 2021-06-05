@@ -1,4 +1,4 @@
-package helpers
+package converters
 
 import (
 	"encoding/xml"
@@ -6,41 +6,29 @@ import (
 	"io"
 	"os"
 	"time"
+
+	extern_helpers "github.com/joincounter/directlyapply-feed-ingester-helpers"
 )
 
-type apploiJobs struct {
-	XMLName xml.Name    `xml:"rss"`
-	Text    string      `xml:",chardata"`
-	Job     []apploiJob `xml:"item"`
-}
-
-type apploiJob struct {
+type tmpJob struct {
 	Text        string  `xml:",chardata"`
-	Jobid       string  `xml:"referencenumber"`
 	Title       string  `xml:"title"`
-	Date        string  `xml:"pubDate"`
-	Category    string  `xml:"category"`
+	ID          string  `xml:"id"`
+	Date        string  `xml:"date"`
+	URL         string  `xml:"url"`
 	Company     string  `xml:"company"`
 	City        string  `xml:"city"`
 	State       string  `xml:"state"`
-	ZIP     	string  `xml:"zipcode"`
-	Description string  `xml:"description"`
-	URL         string  `xml:"link"`
-	// Not Included
 	Country     string  `xml:"country"`
-	Jobtype     string  `xml:"jobtype"`
+	PostalCode  string  `xml:"postalcode"`
+	Description string  `xml:"description"`
+	Salary      string  `xml:"salary"`
 	CPC         float32 `xml:"cpc"`
-	Currency    string  `xml:"currency"`
-	Logo        string  `xml:"logo"`
-	
 }
 
-// apploiConverter convert apploi jobs to standard jobs
-func ApploiConverter(file *os.File) (*[]StandardJob, error) {
+func TmpConverter(file *os.File) (*[]extern_helpers.StandardJob, error) {
 
-	fmt.Println("Sup Apploi")
-
-	jobs := make([]StandardJob, 0)
+	jobs := make([]extern_helpers.StandardJob, 0)
 
 	decoder := xml.NewDecoder(file)
 
@@ -57,8 +45,8 @@ func ApploiConverter(file *os.File) (*[]StandardJob, error) {
 		// Inspect the type of the token just read.
 		switch se := token.(type) {
 		case xml.StartElement:
-			if se.Name.Local == "item" {
-				var job apploiJob
+			if se.Name.Local == "job" {
+				var job tmpJob
 				err = decoder.DecodeElement(&job, &se)
 
 				if err != nil {
@@ -66,28 +54,25 @@ func ApploiConverter(file *os.File) (*[]StandardJob, error) {
 					continue
 				}
 
-				// Wed, 27 Jan 2021 05:00:03 GMT
-
-				date, err := time.Parse(time.RFC1123, job.Date)
+				date, err := time.Parse("Mon, 02 Jan 2006 15:04:05 MST", job.Date)
 
 				if err != nil {
 					fmt.Printf("error parsing date: title: %s err: %s", job.Title, err.Error())
 				} else {
-					jobs = append(jobs, StandardJob{
+					jobs = append(jobs, extern_helpers.StandardJob{
 						Title:       job.Title,
-						JobID:       job.Jobid,
+						JobID:       job.ID,
 						URL:         job.URL,
 						Company:     job.Company,
-						Slug:        GenerateSlug(job.Company),
+						Slug:        extern_helpers.GenerateSlug(job.Company),
 						City:        job.City,
 						CPA:         0,
-						CPC:         0,
+						CPC:         job.CPC,
 						Description: job.Description,
 						Date:        date,
 						Country:     job.Country,
-						Category:    job.Category,
-						ZIP: 		 job.ZIP,
-						State: 		 job.State,
+						ZIP:         job.PostalCode,
+						State:       job.State,
 					})
 				}
 			}
