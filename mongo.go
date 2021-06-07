@@ -78,6 +78,28 @@ func DeletePersistentJobs(ids []string, serverAddr string, countryCode string) (
 	return client.Database(countryDatabases[countryCode]).Collection("indexPersistent").UpdateMany(ctx, query, update)
 }
 
+func UpsertEmployer(companyName string, companySlug string, serverAddr string, countryCode string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
+	if err != nil {
+		return err
+	}
+	res := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").FindOne(ctx, bson.M{"slug": companySlug})
+	if res.Err() == mongo.ErrNoDocuments {
+		object := bson.M{
+			"employer": companyName,
+			"slug":     companySlug}
+		_, err := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").InsertOne(ctx, object)
+		if err != nil {
+			return err
+		}
+	} else if res.Err() != nil {
+		return res.Err()
+	}
+	return nil
+}
+
 // PersistentIndexJob minimum representaion of a job
 type PersistentIndexJob struct {
 	ID  string `bson:"_id" db:"external_id"`
