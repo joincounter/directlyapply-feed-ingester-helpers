@@ -78,26 +78,32 @@ func DeletePersistentJobs(ids []string, serverAddr string, countryCode string) (
 	return client.Database(countryDatabases[countryCode]).Collection("indexPersistent").UpdateMany(ctx, query, update)
 }
 
-func UpsertEmployer(companyName string, companySlug string, serverAddr string, countryCode string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
+func UpsertEmployers(jobs []StandardJob, serverAddr string, countryCode string) (int, error) {
+	var addedCompanies int
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
-		return err
+		return addedCompanies, err
 	}
-	res := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").FindOne(ctx, bson.M{"slug": companySlug})
-	if res.Err() == mongo.ErrNoDocuments {
-		object := bson.M{
-			"employer": companyName,
-			"slug":     companySlug}
-		_, err := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").InsertOne(ctx, object)
-		if err != nil {
-			return err
+	for i := 0; i < len(jobs); i++ {
+		job := jobs[i]
+		res := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").FindOne(ctx, bson.M{"slug": job.Slug})
+		if res.Err() == mongo.ErrNoDocuments {
+			object := bson.M{
+				"employer": job.Company,
+				"slug":     job.Slug}
+			_, err := client.Database(countryDatabases[countryCode]).Collection("indexPersistent").InsertOne(ctx, object)
+			if err != nil {
+				return addedCompanies, err
+			} else {
+				addedCompanies++
+			}
+		} else if res.Err() != nil {
+			return addedCompanies, res.Err()
 		}
-	} else if res.Err() != nil {
-		return res.Err()
 	}
-	return nil
+	return addedCompanies, nil
 }
 
 // PersistentIndexJob minimum representaion of a job
