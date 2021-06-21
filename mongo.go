@@ -81,7 +81,7 @@ func DeletePersistentJobs(ids []string, serverAddr string, countryCode string) (
 func UpsertEmployers(jobs []StandardJob, serverAddr string, countryCode string) (int, error) {
 	var addedCompanies int
 	var processedSlugs []string
-	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Hour)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(serverAddr))
 	if err != nil {
