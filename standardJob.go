@@ -28,4 +28,8 @@ type StandardJob struct {
 	Category       string    `json:"category" bson:"category"`
 	Expires        time.Time `json:"expires" bson:"expires"`
 	Summaries      []string  `json:"summaries" bson:"summaries"`
+	Geo            struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+	} `json:"geo" bson:"geo"`
 }
